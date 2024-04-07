@@ -14,7 +14,7 @@ def obtener_zona_disponibilidad():
     # Obtener el ID de la instancia actual usando el servicio de metadatos de EC2
     instance_id = requests.get("http://169.254.169.254/latest/meta-data/instance-id").text
     # Crear un cliente de EC2
-    ec2_client = boto3.client('ec2')
+    ec2_client = boto3.client('ec2', region_name='us-east-1')
     # Obtener la información de la instancia
     instance_info = ec2_client.describe_instances(InstanceIds=[instance_id])
     # Extraer la zona de disponibilidad de la instancia
