@@ -94,4 +94,4 @@ if __name__ == '__main__':
     
 
     # Ejecuta la aplicación Flask con el HOST y PORT especificado
-    app.run(debug=True, host='54.196.53.17', port=port)
+    app.run(debug=True, host='0.0.0.0', port=port)
