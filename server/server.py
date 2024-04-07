@@ -30,7 +30,7 @@ def register_data_node():
 
 if __name__ == '__main__':
     # Especifica el HOST y PORT deseado
-    host = '0.0.0.0'  # Por ejemplo
+    host = '54.196.53.17'  # Por ejemplo
     port = 5000  # Por ejemplo
 
     @app.route('/opcionesDataNodes', methods=['POST'])
