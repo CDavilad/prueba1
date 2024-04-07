@@ -16,11 +16,16 @@ def get_instance_id():
     return response.text
 
 # Obtener la zona de disponibilidad de la instancia de EC2
-def obtener_zona_disponibilidad():
-    instance_id=get_instance_id()
-    ec2_client = boto3.client('ec2')
+def get_instance_availability_zone(instance_id, region_name):
+    ec2_client = boto3.client('ec2', region_name=region_name)
     response = ec2_client.describe_instances(InstanceIds=[instance_id])
     availability_zone = response['Reservations'][0]['Instances'][0]['Placement']['AvailabilityZone']
+    return availability_zone
+
+def obtener_zona_disponibilidad():
+    instance_id = get_instance_id()
+    region_name = 'us-east-1'  # Reemplaza con la región en la que se encuentra tu instancia
+    availability_zone = get_instance_availability_zone(instance_id, region_name)
     return availability_zone
 
 def registrar_con_servidor(host, port, capacidad):
