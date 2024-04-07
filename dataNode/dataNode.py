@@ -5,10 +5,11 @@ from flask import Flask, request, send_file,jsonify, Response
 import base64
 import socket
 
-def obtener_direccion_ip():
-    host = socket.gethostname()
-    direccion_ip = socket.gethostbyname(host)
-    return direccion_ip
+def obtener_direccion_ip_publica():
+    response = requests.get('https://httpbin.org/ip')
+    data = response.json()
+    return data['origin']
+
 
 def registrar_con_servidor(host, port, capacidad):
     server_url = 'http://54.196.53.17:80/register'
