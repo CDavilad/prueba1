@@ -11,7 +11,7 @@ def obtener_direccion_ip():
     return direccion_ip
 
 def registrar_con_servidor(host, port, capacidad):
-    server_url = 'http://54.196.53.17/register'
+    server_url = 'http://54.196.53.17:80/register'
     data = {
         'host': host,
         'port': port,
@@ -33,7 +33,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         port = int(sys.argv[1])
     else:
-        port = 8000
+        port = 80
 
     # Definir el límite de peso en bytes (1000 KB en este caso)
     limite_peso_kilo_bytes = 500.0 # 500 KB 
@@ -65,7 +65,7 @@ if __name__ == '__main__':
         # Guardar el archivo en el diccionario con su nombre
         archivos_guardados[nombre_archivo] = contenido_archivo
         
-        requests.post(f'http://54.196.53.17:5000/actualizarCapacidadDataNode', json={'data': {'host': host, 'port': port, 'nuevaCapacidad': capacidad_disponible}})
+        requests.post(f'http://54.196.53.17:80/actualizarCapacidadDataNode', json={'data': {'host': host, 'port': port, 'nuevaCapacidad': capacidad_disponible}})
              
         return f'Archivo guardado correctamente en el DataNode. Host: {host}, Puerto: {port}', 200
     
