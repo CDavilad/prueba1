@@ -10,23 +10,15 @@ def obtener_direccion_ip():
     data = response.json()
     return data['origin']
 
-# Obtener el nombre de la instancia de EC2 actual
-def get_instance_id():
-    response = requests.get("http://169.254.169.254/latest/meta-data/instance-id")
-    return response.text
-
-# Obtener la zona de disponibilidad de la instancia de EC2
-def get_instance_availability_zone(instance_id, region_name):
-    ec2_client = boto3.client('ec2', region_name=region_name)
-    response = ec2_client.describe_instances(InstanceIds=[instance_id])
-    availability_zone = response['Reservations'][0]['Instances'][0]['Placement']['AvailabilityZone']
-    return availability_zone
-
 def obtener_zona_disponibilidad():
-    instance_id = get_instance_id()
-    region_name = 'us-east-1'  # Reemplaza con la región en la que se encuentra tu instancia
-    availability_zone = get_instance_availability_zone(instance_id, region_name)
-    return availability_zone
+    try:
+        response = requests.get("http://169.254.169.254/latest/meta-data/placement/availability-zone", timeout=0.1)
+        if response.status_code == 200:
+            return response.text
+        else:
+            return "No se pudo obtener la zona de disponibilidad"
+    except requests.exceptions.RequestException as e:
+        return "Error de conexión al obtener la zona de disponibilidad: " + str(e)
 
 def registrar_con_servidor(host, port, capacidad):
     server_url = 'http://44.218.148.6:80/register'
