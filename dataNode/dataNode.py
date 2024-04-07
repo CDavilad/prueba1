@@ -5,7 +5,7 @@ from flask import Flask, request, send_file,jsonify, Response
 import base64
 import socket
 
-def obtener_direccion_ip_publica():
+def obtener_direccion_ip():
     response = requests.get('https://httpbin.org/ip')
     data = response.json()
     return data['origin']
