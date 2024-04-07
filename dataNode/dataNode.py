@@ -3,16 +3,27 @@ import sys
 import requests
 from flask import Flask, request, send_file,jsonify, Response
 import base64
-import socket
+import boto3
 
 def obtener_direccion_ip():
     response = requests.get('https://httpbin.org/ip')
     data = response.json()
     return data['origin']
 
+def obtener_zona_disponibilidad():
+    # Obtener el ID de la instancia actual usando el servicio de metadatos de EC2
+    instance_id = requests.get("http://169.254.169.254/latest/meta-data/instance-id").text
+    # Crear un cliente de EC2
+    ec2_client = boto3.client('ec2')
+    # Obtener la información de la instancia
+    instance_info = ec2_client.describe_instances(InstanceIds=[instance_id])
+    # Extraer la zona de disponibilidad de la instancia
+    availability_zone = instance_info['Reservations'][0]['Instances'][0]['Placement']['AvailabilityZone']
+    print(availability_zone)
+    return availability_zone
 
 def registrar_con_servidor(host, port, capacidad):
-    server_url = 'http://54.196.53.17:80/register'
+    server_url = 'http://44.218.148.6:80/register'
     data = {
         'host': host,
         'port': port,
@@ -29,7 +40,7 @@ def registrar_con_servidor(host, port, capacidad):
 
 if __name__ == '__main__':
     host = obtener_direccion_ip()
-    
+    zona = obtener_zona_disponibilidad()
     # Obtener el puerto de la línea de comandos
     if len(sys.argv) > 1:
         port = int(sys.argv[1])
@@ -66,7 +77,7 @@ if __name__ == '__main__':
         # Guardar el archivo en el diccionario con su nombre
         archivos_guardados[nombre_archivo] = contenido_archivo
         
-        requests.post(f'http://54.196.53.17:80/actualizarCapacidadDataNode', json={'data': {'host': host, 'port': port, 'nuevaCapacidad': capacidad_disponible}})
+        requests.post(f'http://44.218.148.6:80/actualizarCapacidadDataNode', json={'data': {'host': host, 'port': port, 'nuevaCapacidad': capacidad_disponible}})
              
         return f'Archivo guardado correctamente en el DataNode. Host: {host}, Puerto: {port}', 200
     
