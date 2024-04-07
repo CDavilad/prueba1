@@ -10,16 +10,17 @@ def obtener_direccion_ip():
     data = response.json()
     return data['origin']
 
+# Obtener el nombre de la instancia de EC2 actual
+def get_instance_id():
+    response = requests.get("http://169.254.169.254/latest/meta-data/instance-id")
+    return response.text
+
+# Obtener la zona de disponibilidad de la instancia de EC2
 def obtener_zona_disponibilidad():
-    # Obtener el ID de la instancia actual usando el servicio de metadatos de EC2
-    instance_id = requests.get("http://169.254.169.254/latest/meta-data/instance-id").text
-    # Crear un cliente de EC2
-    ec2_client = boto3.client('ec2', region_name='us-east-1')
-    # Obtener la información de la instancia
-    instance_info = ec2_client.describe_instances(InstanceIds=[instance_id])
-    # Extraer la zona de disponibilidad de la instancia
-    availability_zone = instance_info['Reservations'][0]['Instances'][0]['Placement']['AvailabilityZone']
-    print(availability_zone)
+    instance_id=get_instance_id()
+    ec2_client = boto3.client('ec2')
+    response = ec2_client.describe_instances(InstanceIds=[instance_id])
+    availability_zone = response['Reservations'][0]['Instances'][0]['Placement']['AvailabilityZone']
     return availability_zone
 
 def registrar_con_servidor(host, port, capacidad):
@@ -41,6 +42,7 @@ def registrar_con_servidor(host, port, capacidad):
 if __name__ == '__main__':
     host = obtener_direccion_ip()
     zona = obtener_zona_disponibilidad()
+    print(zona)
     # Obtener el puerto de la línea de comandos
     if len(sys.argv) > 1:
         port = int(sys.argv[1])
