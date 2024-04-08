@@ -53,11 +53,8 @@ def redistribuir_archivo(archivo):
         
         # Enviar archivo al DataNode seleccionado
         response = requests.post(f'http://{data_node_destino["host"]}:{data_node_destino["port"]}/guardar', json={'archivo': archivo})
-        if response.status_code == 200:
-            # Actualizar la lista de ubicación de archivos en el servidor
-            requests.post(f'http://44.218.148.6:80/guardar_ubicacion_archivo', json={'ubicacion': archivo})
-        else:
-            print(f'Error al redistribuir archivo al DataNode {data_node_destino["host"]}:{data_node_destino["port"]}')
+        # Actualizar la lista de ubicación de archivos en el servidor
+        requests.post(f'http://44.218.148.6:80/guardar_ubicacion_archivo', json={'ubicacion': archivo})
     else:
         print('Error al obtener lista de DataNodes disponibles.')
 
