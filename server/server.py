@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 import json
-
+import requests
 
 app = Flask(__name__)
 
@@ -69,7 +69,7 @@ if __name__ == '__main__':
         return 'No se encontró el DataNode especificado.', 404
 
         
-
+    
     
     @app.route('/guardar_ubicacion_archivo', methods=['POST'])
     def guardar_ubicacion_archivo():
