@@ -3,7 +3,6 @@ import sys
 import requests
 from flask import Flask, request, send_file,jsonify, Response
 import base64
-import boto3
 
 def obtener_direccion_ip():
     response = requests.get('https://httpbin.org/ip')
@@ -30,6 +29,10 @@ def registrar_con_servidor(host, port, capacidad, rack):
 
 if __name__ == '__main__':
     host = obtener_direccion_ip()
+    if host == "18.206.50.61" or host == "18.213.101.29":
+        zona = "rack2"
+    else:
+        zona = "rack1"
     # Obtener el puerto de la línea de comandos
     if len(sys.argv) > 1:
         port = int(sys.argv[1])
@@ -46,7 +49,7 @@ if __name__ == '__main__':
     nombre_archivos = []
 
 
-    registrar_con_servidor(host, port, 500.0, 'rack1')
+    registrar_con_servidor(host, port, 500.0, zona)
 
     app = Flask(__name__)
 
@@ -66,9 +69,9 @@ if __name__ == '__main__':
         # Guardar el archivo en el diccionario con su nombre
         archivos_guardados[nombre_archivo] = contenido_archivo
         
-        requests.post(f'http://44.218.148.6:80/actualizarCapacidadDataNode', json={'data': {'host': host, 'port': port, 'nuevaCapacidad': capacidad_disponible}})
+        requests.post(f'http://44.218.148.6:80/actualizarCapacidadDataNode', json={'data': {'host': host, 'port': port, 'nuevaCapacidad': capacidad_disponible, 'rack': zona}})
              
-        return f'Archivo guardado correctamente en el DataNode. Host: {host}, Puerto: {port}', 200
+        return f'Archivo guardado correctamente en el DataNode. Host: {host}, Puerto: {port}, Rack: {zona}', 200
     
 
     @app.route('/recuperar_archivo', methods=['GET'])
