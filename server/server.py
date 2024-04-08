@@ -28,15 +28,39 @@ def eliminar_data_node(host, port):
     redistribuir_archivos(host, port)
 
 def redistribuir_archivos(host_desconectado, port_desconectado):
-    global direccion_archivos_guardados
+    archivos_a_redistribuir = []
+    
+    # Obtener los archivos almacenados en el DataNode desconectado
     for direccion_archivo in direccion_archivos_guardados:
         if direccion_archivo['host'] == host_desconectado and direccion_archivo['port'] == port_desconectado:
-            redistribuir_archivo(direccion_archivo['nombre'], direccion_archivo['posicion'])
-            direccion_archivos_guardados.remove(direccion_archivo)
+            archivos_a_redistribuir.append(direccion_archivo)
+    
+    # Eliminar las entradas de archivos del DataNode desconectado
+    direccion_archivos_guardados[:] = [archivo for archivo in direccion_archivos_guardados if archivo not in archivos_a_redistribuir]
 
-def redistribuir_archivo(nombre_archivo, posicion):
-    # Implementa la lógica para redistribuir el archivo a otros DataNodes disponibles
-    pass
+    # Enviar los archivos a otros DataNodes disponibles
+    for archivo in archivos_a_redistribuir:
+        redistribuir_archivo(archivo)
+
+def redistribuir_archivo(archivo):
+    # Obtener lista de DataNodes disponibles ordenados por capacidad
+    response = requests.post('http://44.218.148.6:80/opcionesDataNodes')
+    if response.status_code == 200:
+        data_nodes_disponibles = response.json()
+        
+        # Seleccionar DataNode con mayor capacidad disponible
+        data_node_destino = max(data_nodes_disponibles, key=lambda x: x['capacidadActual'])
+        
+        # Enviar archivo al DataNode seleccionado
+        response = requests.post(f'http://{data_node_destino["host"]}:{data_node_destino["port"]}/guardar', json={'archivo': archivo})
+        if response.status_code == 200:
+            # Actualizar la lista de ubicación de archivos en el servidor
+            requests.post(f'http://44.218.148.6:80/guardar_ubicacion_archivo', json={'ubicacion': archivo})
+        else:
+            print(f'Error al redistribuir archivo al DataNode {data_node_destino["host"]}:{data_node_destino["port"]}')
+    else:
+        print('Error al obtener lista de DataNodes disponibles.')
+
 
 @app.route('/register', methods=['POST'])
 def register_data_node():
