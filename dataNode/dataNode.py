@@ -6,6 +6,8 @@ import base64
 
 partes_enviadas = set()
 
+
+
 def obtener_direccion_ip():
     response = requests.get('https://httpbin.org/ip')
     data = response.json()
@@ -90,7 +92,7 @@ if __name__ == '__main__':
 
                 if identificador not in partes_enviadas:
                     # Enviar la parte del archivo al otro DataNode
-                    response = requests.post(f'http://{otro_data_node["host"]}:{otro_data_node["port"]}/guardar', json={'archivo': {'nombre': nombre_archivo, 'archivo': contenido_archivo, 'tamaño_archivo': tamaño_archivo}})
+                    response = requests.post(f'http://{otro_data_node["host"]}:{otro_data_node["port"]}/guardar_archivo', json={'archivo': {'nombre': nombre_archivo, 'archivo': contenido_archivo, 'tamaño_archivo': tamaño_archivo}})
                     if response.status_code == 200:
                         print(f'Parte del archivo enviada correctamente al DataNode en la zona {otro_data_node["rack"]}')
                         partes_enviadas.add(identificador)  # Agregar identificador al conjunto de partes enviadas
@@ -113,6 +115,9 @@ if __name__ == '__main__':
         contenido_archivo = archivos_guardados[nombre_archivo]
         return Response(contenido_archivo, mimetype='application/octet-stream')
 
+    @app.route('/ping')
+    def ping():
+        return 'pong', 200
 
 
     # @app.route('/recuperar_archivo', methods=['GET'])
