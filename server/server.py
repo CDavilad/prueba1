@@ -13,14 +13,17 @@ def register_data_node():
     host = data.get('host')
     port = data.get('port')
     capacidad = data.get('capacidad')
-
+    if host == "18.206.50.61" or host == "18.213.101.29":
+        zona = "rack2"
+    else:
+        zona = "rack1"
     # Verificar si el DataNode ya esta registrado
     for node in data_nodes:
         if node['host'] == host and node['port'] == port:
             return jsonify({'message': 'DataNode ya registrado'}), 200
 
     # Si el DataNode no está registrado, agregarlo a la lista
-    data_nodes.append({'host': host, 'port': port, 'capacidadActual': capacidad})
+    data_nodes.append({'host': host, 'port': port, 'capacidadActual': capacidad, 'rack': zona})
 
     print("Lista de DataNodes registrados:")
     for node in data_nodes:
