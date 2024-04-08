@@ -10,34 +10,14 @@ def obtener_direccion_ip():
     data = response.json()
     return data['origin']
 
-# Obtener el nombre de la instancia de EC2 actual
-def get_instance_id():
-    response = requests.get("http://169.254.169.254/latest/meta-data/instance-id")
-    return response.text
 
-# Obtener la zona de disponibilidad de la instancia de EC2
-def get_instance_availability_zone(instance_id, region_name):
-    ec2_client = boto3.client('ec2', region_name=region_name)
-    response = ec2_client.describe_instances(InstanceIds=[instance_id])
-    availability_zone = response['Reservations'][0]['Instances'][0]['Placement']['AvailabilityZone']
-    return availability_zone
-
-def obtener_zona_disponibilidad():
-    instance_id = get_instance_id()
-    region_name = 'us-east-1'  # Reemplaza con la región en la que se encuentra tu instancia
-    availability_zone = get_instance_availability_zone(instance_id, region_name)
-    return availability_zone
-
-if __name__ == "__main__":
-    zona = obtener_zona_disponibilidad()
-    print("La instancia está en la zona de disponibilidad:", zona)
-
-def registrar_con_servidor(host, port, capacidad):
+def registrar_con_servidor(host, port, capacidad, rack):
     server_url = 'http://44.218.148.6:80/register'
     data = {
         'host': host,
         'port': port,
-        'capacidad': capacidad
+        'capacidad': capacidad,
+        'rack': rack
     }
     try:
         response = requests.post(server_url, json=data)
@@ -50,8 +30,6 @@ def registrar_con_servidor(host, port, capacidad):
 
 if __name__ == '__main__':
     host = obtener_direccion_ip()
-    zona = obtener_zona_disponibilidad()
-    print(zona)
     # Obtener el puerto de la línea de comandos
     if len(sys.argv) > 1:
         port = int(sys.argv[1])
@@ -68,7 +46,7 @@ if __name__ == '__main__':
     nombre_archivos = []
 
 
-    registrar_con_servidor(host, port, 500.0)
+    registrar_con_servidor(host, port, 500.0, 'rack1')
 
     app = Flask(__name__)
 
