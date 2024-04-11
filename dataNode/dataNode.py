@@ -84,7 +84,17 @@ if __name__ == '__main__':
                 otro_data_node = data_node
                 break
         print(otro_data_node['rack'])
-        
+        if otro_data_node is not None:
+            guardar_archivo = True
+            if tamaño_archivo >= otro_data_node[capacidad_disponible]:
+                guardar_archivo = False
+            if guardar_archivo:
+                response = requests.post(f'http://{otro_data_node["host"]}:{otro_data_node["port"]}/recibir', json={'archivo': {'nombre': nombre_archivo, 'archivo': datos_archivo, 'tamaño_archivo': tamaño_archivo}})
+                if response.status_code == 200:
+                    print(response.text)
+                    requests.post(f'http://44.218.148.6:80/guardar_ubicacion_archivo', json={'ubicacion': {'nombre': nombre_archivo, 'posicion': datos_archivo.get('posicion'), 'host': otro_data_node["host"], 'port': otro_data_node["port"]}})
+                elif response.status_code == 400:
+                    print(response.text)
 
         return f'Archivo guardado correctamente en el DataNode. Host: {host}, Puerto: {port}, Rack: {zona}', 200
     
@@ -102,7 +112,24 @@ if __name__ == '__main__':
     def ping():
         return 'pong', 200
 
+    @app.route('/recibir', methods=['POST'])
+    def recibir_archivo():
+        datos_archivo = request.json.get('archivo')
+        nombre_archivo = datos_archivo.get('nombre')
+        contenido_archivo = datos_archivo.get('archivo')
+        tamaño_archivo = datos_archivo.get('tamaño_archivo')
 
+        global limite_peso_kilo_bytes  # Declarar como global para modificar la variable global
+
+        capacidad_disponible = limite_peso_kilo_bytes - tamaño_archivo
+        limite_peso_kilo_bytes = capacidad_disponible
+
+        # Guardar el archivo en el diccionario con su nombre
+        archivos_guardados[nombre_archivo] = contenido_archivo
+
+        requests.post(f'http://44.218.148.6:80/actualizarCapacidadDataNode', json={'data': {'host': host, 'port': port, 'nuevaCapacidad': capacidad_disponible, 'rack': zona}})
+        print("Nombres de archivos guardados:")
+        return f'Archivo guardado correctamente en el DataNode. Host: {host}, Puerto: {port}, Rack: {zona}', 200
     # @app.route('/recuperar_archivo', methods=['GET'])
     # def recuperar_archivo():
     #     # Convertir la lista archivos a bytes
