@@ -83,6 +83,13 @@ def register_data_node():
 
     return jsonify({'message': 'DataNode registrado correctamente'}), 200
 
+@app.route('/opcionDatanode', methods=['POST'])
+def buscar_dataNode():
+    # Ordenar la lista de DataNodes por 'capacidadActual' en orden descendente
+    data_nodes_ordenados = sorted(data_nodes, key=lambda x: x['capacidadActual'], reverse=True)
+    
+    return jsonify(data_nodes_ordenados)
+
 @app.route('/opcionesDataNodes', methods=['POST'])
 def buscar_dataNodes_disponibles():
     # Ordenar la lista de DataNodes por 'capacidadActual' en orden descendente
