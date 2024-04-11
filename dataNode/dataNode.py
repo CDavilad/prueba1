@@ -75,7 +75,7 @@ if __name__ == '__main__':
         requests.post(f'http://44.218.148.6:80/actualizarCapacidadDataNode', json={'data': {'host': host, 'port': port, 'nuevaCapacidad': capacidad_disponible, 'rack': zona}})
 
         # Obtener lista de DataNodes
-        lista_de_data_nodes = requests.get('http://44.218.148.6:80/opcionDatanode')
+        lista_de_data_nodes = jsonify(requests.get('http://44.218.148.6:80/opcionDatanode'))
         print("opcion datanode")
         
         print("salió la lista")
