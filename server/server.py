@@ -27,7 +27,8 @@ def eliminar_data_node(host, port):
         if node["host"] == host and node["port"] == port:
             data_nodes.remove(node)
             break
-    
+    global direccion_archivos_guardados
+    direccion_archivos_guardados = [archivo for archivo in direccion_archivos_guardados if archivo["host"] != host]
     redistribuir_archivos(host, port)
 
 def redistribuir_archivos(host_desconectado, port_desconectado):
