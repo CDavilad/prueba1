@@ -127,6 +127,8 @@ if __name__ == '__main__':
 
         requests.post(f'http://44.218.148.6:80/actualizarCapacidadDataNode', json={'data': {'host': host, 'port': port, 'nuevaCapacidad': capacidad_disponible, 'rack': zona}})
         print("Nombres de archivos guardados:")
+        for nombre_archivo in archivos_guardados:
+            print(nombre_archivo)
         return f'Archivo guardado correctamente en el DataNode. Host: {host}, Puerto: {port}, Rack: {zona}', 200
     # @app.route('/recuperar_archivo', methods=['GET'])
     # def recuperar_archivo():
