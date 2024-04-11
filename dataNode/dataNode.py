@@ -82,7 +82,7 @@ if __name__ == '__main__':
         # Encontrar un DataNode de una zona diferente
         otro_data_node = None
         for data_node in lista_de_data_nodes:
-            if data_node['rack'] != zona:
+            if str(data_node['rack']) != zona:
                 otro_data_node = data_node
                 print("se encontró")
                 break
