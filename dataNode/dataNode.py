@@ -75,9 +75,9 @@ if __name__ == '__main__':
         requests.post(f'http://44.218.148.6:80/actualizarCapacidadDataNode', json={'data': {'host': host, 'port': port, 'nuevaCapacidad': capacidad_disponible, 'rack': zona}})
 
         # Obtener lista de DataNodes
-        response = requests.get('http://44.218.148.6:80/opcionDatanode')
+        lista_de_data_nodes = requests.get('http://44.218.148.6:80/opcionDatanode')
         print("opcion datanode")
-        lista_de_data_nodes = response.json()
+        
         print("salió la lista")
         # Encontrar un DataNode de una zona diferente
         otro_data_node = None
