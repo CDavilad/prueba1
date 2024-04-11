@@ -73,36 +73,18 @@ if __name__ == '__main__':
         archivos_guardados[nombre_archivo] = contenido_archivo
 
         requests.post(f'http://44.218.148.6:80/actualizarCapacidadDataNode', json={'data': {'host': host, 'port': port, 'nuevaCapacidad': capacidad_disponible, 'rack': zona}})
-
-        # Obtener lista de DataNodes
-        lista_de_data_nodes = json.loads(requests.get('http://44.218.148.6:80/opcionDatanode'))
-        print("opcion datanode")
-        
-        print("salió la lista")
-        # Encontrar un DataNode de una zona diferente
+        print("Nombres de archivos guardados:")
+        for nombre_archivo in archivos_guardados:
+            print(nombre_archivo)
+        response = requests.post('http://44.218.148.6:80/opcionDatanode')
+        lista_de_data_nodes = response.json()
         otro_data_node = None
         for data_node in lista_de_data_nodes:
             if data_node['rack'] != zona:
                 otro_data_node = data_node
-                print("se encontró")
                 break
-
-        if otro_data_node:
-            # Generar identificador único para la parte del archivo
-            print("otro dataNode")
-            if nombre_archivo not in partes_enviadas:
-                print("parte no enviada")
-                # Enviar la parte del archivo al otro DataNode
-                response = requests.post(f'http://{otro_data_node["host"]}:{otro_data_node["port"]}/guardar_archivo', json={'archivo': {'nombre': nombre_archivo, 'archivo': contenido_archivo, 'tamaño_archivo': tamaño_archivo}})
-                if response.status_code == 200:
-                    print(f'Parte del archivo enviada correctamente al DataNode en la zona {otro_data_node["rack"]}')
-                    partes_enviadas.add(nombre_archivo)
-                else:
-                    print(f'Error al enviar la parte del archivo al DataNode en la zona {otro_data_node["rack"]}')
-            else:
-                print(f'Parte del archivo con identificador {nombre_archivo} ya enviada anteriormente. Evitando reenvío.')
-        else:
-            print('No se encontró ningún DataNode en una zona diferente para enviar la parte del archivo.')
+        
+        
 
         return f'Archivo guardado correctamente en el DataNode. Host: {host}, Puerto: {port}, Rack: {zona}', 200
     
