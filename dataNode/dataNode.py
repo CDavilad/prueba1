@@ -86,8 +86,6 @@ if __name__ == '__main__':
         print(otro_data_node['rack'])
         if otro_data_node is not None:
             guardar_archivo = True
-            if tamaño_archivo >= otro_data_node[capacidad_disponible]:
-                guardar_archivo = False
             if guardar_archivo:
                 response = requests.post(f'http://{otro_data_node["host"]}:{otro_data_node["port"]}/recibir', json={'archivo': {'nombre': nombre_archivo, 'archivo': datos_archivo, 'tamaño_archivo': tamaño_archivo}})
                 if response.status_code == 200:
