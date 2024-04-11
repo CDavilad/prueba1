@@ -60,6 +60,7 @@ def redistribuir_archivo(archivo):
         requests.post(f'http://44.218.148.6:80/guardar_ubicacion_archivo', json={'ubicacion': archivo})
     else:
         print('Error al obtener lista de DataNodes disponibles.')
+    global direccion_archivos_guardados
     direccion_archivos_guardados = [archivo for archivo in direccion_archivos_guardados if archivo["host"] != host]
 
 
