@@ -83,7 +83,7 @@ if __name__ == '__main__':
             if data_node['rack'] != zona:
                 otro_data_node = data_node
                 break
-        print(otro_data_node.rack)
+        print(otro_data_node['rack'])
         
 
         return f'Archivo guardado correctamente en el DataNode. Host: {host}, Puerto: {port}, Rack: {zona}', 200
