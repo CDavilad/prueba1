@@ -23,8 +23,11 @@ def ping_data_nodes():
         time.sleep(10)  # Espera 10 segundos antes de volver a verificar
 
 def eliminar_data_node(host, port):
-    global data_nodes
-    data_nodes = [node for node in data_nodes if node['host'] != host or node['port'] != port]
+    for node in data_nodes:
+        if node["host"] == host and node["port"] == port:
+            data_nodes.remove(node)
+            break
+    
     redistribuir_archivos(host, port)
 
 def redistribuir_archivos(host_desconectado, port_desconectado):
@@ -57,6 +60,7 @@ def redistribuir_archivo(archivo):
         requests.post(f'http://44.218.148.6:80/guardar_ubicacion_archivo', json={'ubicacion': archivo})
     else:
         print('Error al obtener lista de DataNodes disponibles.')
+    direccion_archivos_guardados = [archivo for archivo in direccion_archivos_guardados if archivo["host"] != host]
 
 
 @app.route('/register', methods=['POST'])
