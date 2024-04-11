@@ -4,7 +4,7 @@ import requests
 from flask import Flask, request, send_file,jsonify, Response
 import base64
 
-partes_enviadas = set()
+
 
 
 
@@ -51,7 +51,7 @@ if __name__ == '__main__':
 
     # Inicializar la lista de nombre de archivos
     nombre_archivos = []
-
+    partes_enviadas = []
 
     registrar_con_servidor(host, port, 500.0, zona)
 
@@ -78,7 +78,7 @@ if __name__ == '__main__':
         response = requests.get('http://44.218.148.6:80/opcionesDataNodes')
         if response.status_code == 200:
             lista_de_data_nodes = response.json()
-
+            print("salió la lista")
             # Encontrar un DataNode de una zona diferente
             otro_data_node = None
             for data_node in lista_de_data_nodes:
