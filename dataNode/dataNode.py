@@ -3,7 +3,7 @@ import sys
 import requests
 from flask import Flask, request, send_file,jsonify, Response
 import base64
-
+import json
 
 
 
@@ -75,14 +75,14 @@ if __name__ == '__main__':
         requests.post(f'http://44.218.148.6:80/actualizarCapacidadDataNode', json={'data': {'host': host, 'port': port, 'nuevaCapacidad': capacidad_disponible, 'rack': zona}})
 
         # Obtener lista de DataNodes
-        lista_de_data_nodes = jsonify(requests.get('http://44.218.148.6:80/opcionDatanode'))
+        lista_de_data_nodes = json.loads(requests.get('http://44.218.148.6:80/opcionDatanode'))
         print("opcion datanode")
         
         print("salió la lista")
         # Encontrar un DataNode de una zona diferente
         otro_data_node = None
         for data_node in lista_de_data_nodes:
-            if str(data_node['rack']) != zona:
+            if data_node['rack'] != zona:
                 otro_data_node = data_node
                 print("se encontró")
                 break
